@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: skyguard-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_dev_only}
+      MYSQL_DATABASE: ${DB_NAME:-skyguard}
+      MYSQL_USER: ${DB_USER:-skyguard}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-skyguard_dev}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - skyguard_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_dev_only}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  skyguard_mysql_data:
